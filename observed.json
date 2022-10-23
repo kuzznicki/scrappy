@@ -1,0 +1,17 @@
+{
+    "profumo-75ml": {
+        "name": "Acqua Di Gio Profumo, EDP 75ml",
+        "url": "https://perfumehub.pl/giorgio-armani-acqua-di-gio-profumo-woda-perfumowana-dla-mezczyzn-75-ml",
+        "parser": "perfumehub"
+    },
+    "guerlain-lhomme-ideal-50ml": {
+        "name": "Guerlain L'homme Ideal, EDP 50ml",
+        "url": "https://perfumehub.pl/guerlain-l'homme-ideal-woda-perfumowana-dla-mezczyzn-50-ml",
+        "parser": "perfumehub"
+    },
+    "ysl-la-nuit-de-lhomme-edp-60ml": {
+        "name": "YSL La Nuit De L'homme, EDP 60ml",
+        "url": "https://www.perfumehub.pl/yves-saint-laurent-la-nuit-de-l'homme-woda-perfumowana-dla-mezczyzn-60-ml",
+        "parser": "perfumehub"
+    }
+}
