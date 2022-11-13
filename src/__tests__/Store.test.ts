@@ -1,7 +1,7 @@
 import Store, {  } from "../Store";
 import fs from "fs/promises";
 import Logger from "../Logger";
-import { LowestPricesById, ObservedItemsDict, ScrapResultById } from "../types";
+import { LowestPricesById, TrackedPriceItemsDict, PriceScrapResultById } from "../types";
 
 import { datetimeRegex } from "./helpers";
 
@@ -16,29 +16,29 @@ beforeEach(() => {
     writeFileMock = fs.writeFile = jest.fn();
 })
 
-test('Should be able to load observed items', async () => {
+test('Should be able to load tracked price items', async () => {
     const data = { 'product-id': { name: 'Product name', url: 'https://example.com', parser: 'perfumehub' }};
     const fileContent = JSON.stringify(data);
     readFileMock.mockReturnValue(fileContent);
 
-    const items: ObservedItemsDict = await store.loadObservedItems();
+    const items: TrackedPriceItemsDict = await store.loadTrackedPriceItems();
     
     expect(readFileMock).toBeCalledTimes(1);
-    expect(items).toMatchObject<ObservedItemsDict>(data);
-    expect(store.getObservedItems()).toMatchObject<ObservedItemsDict>(data);
+    expect(items).toMatchObject<TrackedPriceItemsDict>(data);
+    expect(store.getTrackedPriceItems()).toMatchObject<TrackedPriceItemsDict>(data);
 })
 
-test('Should return empty object if failed to load observed items', async () => {
+test('Should return empty object if failed to load tracked price items', async () => {
     const logErrorMock = Logger.getInstance().error = jest.fn();
 
     readFileMock.mockRejectedValue(mockErrorString);
     
-    const items: ObservedItemsDict = await store.loadObservedItems();
+    const items: TrackedPriceItemsDict = await store.loadTrackedPriceItems();
 
     expect(logErrorMock).toBeCalledTimes(1);
-    expect(logErrorMock).toBeCalledWith(expect.stringMatching('Could not load observed items file - ' + mockErrorString));
+    expect(logErrorMock).toBeCalledWith(expect.stringMatching('Could not load tracked price items file - ' + mockErrorString));
     expect(readFileMock).toBeCalledTimes(1);
-    expect(items).toMatchObject<ObservedItemsDict>({});
+    expect(items).toMatchObject<TrackedPriceItemsDict>({});
 });
 
 test('Should be able to get lowest prices data from file', async () => {
@@ -89,7 +89,7 @@ test('Should return false if failed to save lowest prices data to file', async (
 });
 
 test('Should be able to save scraping results to file', async () => {
-    const data: ScrapResultById = { 'item1': [{ shop: 'A', price: 2 }] };
+    const data: PriceScrapResultById = { 'item1': [{ shop: 'A', price: 2 }] };
     const success = await store.saveResult(data);
 
     expect(writeFileMock).toBeCalledTimes(1);
@@ -101,7 +101,7 @@ test('Should return false if failed to save scraping results to file', async () 
     const logErrorMock = Logger.getInstance().error = jest.fn();
     writeFileMock.mockRejectedValue(mockErrorString);
     
-    const data: ScrapResultById = { 'item1': [{ shop: 'A', price: 2 }] };
+    const data: PriceScrapResultById = { 'item1': [{ shop: 'A', price: 2 }] };
     const success = await store.saveResult(data);
 
     expect(writeFileMock).toBeCalledTimes(1);

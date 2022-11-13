@@ -1,8 +1,8 @@
-import { ScrapResult } from "../types";
+import { PriceScrapResult } from "../types";
 import perfumehub from "./perfumehub";
 
 const modulesMap: { 
-    [k: string]: (html: string) => ScrapResult[]
+    [k: string]: (html: string) => PriceScrapResult[]
 } = {
     perfumehub
 }

@@ -8,7 +8,7 @@ import TelegramBot from './TelegramBot';
 
 (async () => {
     const store = new Store();
-    await store.loadObservedItems();
+    await store.loadTrackedPriceItems();
 
     const bot = new TelegramBot();
     bot.launch();

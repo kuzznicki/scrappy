@@ -1,24 +1,24 @@
-export type ScrapResultById = {
-    [observedItemId: string]: ScrapResult[]
+export type PriceScrapResultById = {
+    [trackedItemId: string]: PriceScrapResult[]
 };
 
 export type LowestPricesById = {
-    [observedItemId: string]: number,
+    [trackedItemId: string]: number,
 };
 
-export type ScrapResult = {
+export type PriceScrapResult = {
     shop: string,
     price: number
 };
 
-export type ObservedItem = {
+export type TrackedPriceItem = {
     name: string,
     url: string,
     parser: string
 };
 
-export type ObservedItemsDict = {
-    [observedItemId: string]: {
+export type TrackedPriceItemsDict = {
+    [trackedItemId: string]: {
         name: string,
         url: string,
         parser: string

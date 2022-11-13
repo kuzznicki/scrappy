@@ -1,6 +1,6 @@
 declare namespace NodeJS {
     interface ProcessEnv {
-        OBSERVED_ITEMS_JSON: string
+        TRACKED_PRICES_JSON: string
         RESULTS_FOLDER: string
         SERVER_PORT: string
         CHECK_INTERVAL_MINUTES: string

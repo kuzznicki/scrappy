@@ -1,15 +1,15 @@
 import axios from "axios";
-import { ScrapResult } from "./types";
+import { PriceScrapResult } from "./types";
 
 export default class Scraper {
     async get(
         url: string, 
-        parser: (html: string) => ScrapResult[]
-    ): Promise<[Error, null] | [false, ScrapResult[]]> {
+        parser: (html: string) => PriceScrapResult[]
+    ): Promise<[Error, null] | [false, PriceScrapResult[]]> {
         
         try {
             const html = await this._scrapHtml(url);
-            const res: ScrapResult[] = parser(html);
+            const res: PriceScrapResult[] = parser(html);
             return [false, res];
         } catch (e) {
             return e instanceof Error ? [e, null] : [new Error(e + ''), null];

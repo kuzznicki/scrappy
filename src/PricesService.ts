@@ -3,7 +3,7 @@ import parsers from "./parsers";
 import Scraper from "./Scraper";
 import Store from "./Store";
 import TelegramBot from "./TelegramBot";
-import { isNewPriceUpdate, LowestPricesById, ObservedItemsDict, PriceUpdate, ScrapResultById } from "./types";
+import { isNewPriceUpdate, LowestPricesById, TrackedPriceItemsDict, PriceUpdate, PriceScrapResultById } from "./types";
 import { getEnvVariable, wait } from "./utils";
 
 export default class PricesService {
@@ -22,7 +22,7 @@ export default class PricesService {
     async updatePrices() {
         const { store, bot } = this;
 
-        const items = store.getObservedItems();
+        const items = store.getTrackedPriceItems();
         const scrappedData = await this.scrapPrices(items);
         store.saveResult(scrappedData);
 
@@ -38,11 +38,11 @@ export default class PricesService {
         bot.sendMessage(this.generateBotUpdateMessage(items, updates));
     }
 
-    private async scrapPrices(items: ObservedItemsDict): Promise<ScrapResultById> {
+    private async scrapPrices(items: TrackedPriceItemsDict): Promise<PriceScrapResultById> {
         const { scraper, logger } = this; 
 
         const requestInterval = getEnvVariable('REQUEST_INTERVAL_SECONDS', 'number') * 1000;
-        const scrappedData: ScrapResultById = {};
+        const scrappedData: PriceScrapResultById = {};
         
         const itemsLen = Object.keys(items).length;
         logger.info(`Scrapping ${itemsLen} items...`);
@@ -65,7 +65,7 @@ export default class PricesService {
         return scrappedData;
     }
 
-    private scrappedDataToLowestPrices(scrappedData: ScrapResultById): LowestPricesById {
+    private scrappedDataToLowestPrices(scrappedData: PriceScrapResultById): LowestPricesById {
         const scrappedLowestPrices: LowestPricesById = {};
         
         for (const [id, data] of Object.entries(scrappedData)) {
@@ -110,7 +110,7 @@ export default class PricesService {
         });
     }
 
-    private generateBotUpdateMessage(items: ObservedItemsDict, updates: PriceUpdate[]): string {
+    private generateBotUpdateMessage(items: TrackedPriceItemsDict, updates: PriceUpdate[]): string {
         const bot = this.bot;
         const len = updates.length;
         

@@ -1,10 +1,10 @@
 import { load } from "cheerio";
-import { ScrapResult } from "../types";
+import { PriceScrapResult } from "../types";
 
 const priceRegex = /[0-9]+\.[0-9]{2}/;
 
-export default function(htmlStr: string): ScrapResult[] {
-    const res: ScrapResult[] = [];
+export default function(htmlStr: string): PriceScrapResult[] {
+    const res: PriceScrapResult[] = [];
 
     const $ = load(htmlStr);
     const elems = $('#main-content .offer');

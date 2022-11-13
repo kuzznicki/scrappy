@@ -1,12 +1,12 @@
 import fs from "fs/promises";
 import { existsSync, mkdirSync } from "fs";
-import { LowestPricesById, ObservedItemsDict, ScrapResultById } from "./types";
+import { LowestPricesById, TrackedPriceItemsDict, PriceScrapResultById } from "./types";
 import Logger from "./Logger";
 import { formatDatetime, getEnvVariable } from "./utils";
 import parsers from "./parsers";
 
 export default class Store {
-    observedItems: ObservedItemsDict = {};
+    trackedPricesItems: TrackedPriceItemsDict = {};
     resultsFolder: string;
     lowestPricesFilename = 'lowest_prices.json';
 
@@ -16,18 +16,18 @@ export default class Store {
         this.resultsFolder = resultsFolder;
     }
 
-    async loadObservedItems(): Promise<ObservedItemsDict> {
+    async loadTrackedPriceItems(): Promise<TrackedPriceItemsDict> {
         try {
-            const file = await fs.readFile(getEnvVariable('OBSERVED_ITEMS_JSON'));
+            const file = await fs.readFile(getEnvVariable('TRACKED_PRICES_JSON'));
             const json = file.toString();
             const jsonData = JSON.parse(json);
-            const items: ObservedItemsDict = {};
+            const items: TrackedPriceItemsDict = {};
             
             Object.keys(jsonData).forEach(k => {
                 const { name, url, parser } = jsonData[k];
 
                 if (!name || !url || !parser) {
-                    throw new Error(`Wrong definition of ${k} observed item.`);
+                    throw new Error(`Wrong definition of ${k} tracked item.`);
                 }
 
                 if (!parsers[parser]) {
@@ -37,16 +37,16 @@ export default class Store {
                 items[k] = { name, url, parser };
             });
 
-            this.observedItems = items;
+            this.trackedPricesItems = items;
             return items;
         } catch (e) {
-            Logger.getInstance().error('Could not load observed items file - ' + e);
+            Logger.getInstance().error('Could not load tracked items file - ' + e);
             return {};
         }
     }
 
-    getObservedItems(): ObservedItemsDict {
-        return this.observedItems;
+    getTrackedPriceItems(): TrackedPriceItemsDict {
+        return this.trackedPricesItems;
     }
 
     async getLowestPricesFromFile(): Promise<LowestPricesById> {
@@ -79,7 +79,7 @@ export default class Store {
         }
     }
 
-    async saveResult(result: ScrapResultById): Promise<boolean> {
+    async saveResult(result: PriceScrapResultById): Promise<boolean> {
         const datetime = formatDatetime(new Date(), true);
         const filename = `${this.resultsFolder}/${datetime}.json`;
 
