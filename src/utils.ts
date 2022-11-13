@@ -51,3 +51,25 @@ export function getEnvVariable(variableName: string, type?: 'string' | 'number')
 export function wait(timeMs: number): Promise<void> {
     return new Promise(resolve => setTimeout(() => resolve(), timeMs));
 }
+
+export function splitMessage(messageParts: string[], singleMessageCharsLimit: number): string[] {
+    const messages: string[] = [];
+    let currentMessageIndex = 0;
+
+    for (const part of messageParts) {
+        const currentMessage = messages[currentMessageIndex] || '';
+
+        if (part.length > singleMessageCharsLimit) {
+            throw new Error('Provided message part that exceeds limit of ' + singleMessageCharsLimit + ' characters.');
+        }
+
+        if (currentMessage.length + part.length > 5000) {
+            currentMessageIndex++;
+            continue;
+        }
+
+        messages[currentMessageIndex] = currentMessage + part;
+    }
+
+    return messages;
+}

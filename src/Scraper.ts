@@ -1,8 +1,8 @@
 import axios from "axios";
-import { PriceScrapResult } from "./types";
+import { PriceScrapResult, AvailabilityById } from "./types";
 
 export default class Scraper {
-    async get(
+    async getPrice(
         url: string, 
         parser: (html: string) => PriceScrapResult[]
     ): Promise<[Error, null] | [false, PriceScrapResult[]]> {
@@ -13,6 +13,21 @@ export default class Scraper {
             return [false, res];
         } catch (e) {
             return e instanceof Error ? [e, null] : [new Error(e + ''), null];
+        }
+    }
+
+    async getAvailability(
+        url: string, 
+        parser: (html: string, siteUrl: string) => [AvailabilityById, boolean]
+    ): Promise<[Error, null, null] | [false, AvailabilityById, boolean]> {
+        
+        try {
+            const html = await this._scrapHtml(url);
+            const siteUrl = new URL(url).hostname;
+            const res: [AvailabilityById, boolean] = parser(html, siteUrl);
+            return [false, res[0], res[1]];
+        } catch (e) {
+            return e instanceof Error ? [e, null, null] : [new Error(e + ''), null, null];
         }
     }
 

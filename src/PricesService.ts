@@ -1,5 +1,5 @@
 import Logger from "./Logger";
-import parsers from "./parsers";
+import { priceParsers } from "./parsers";
 import Scraper from "./Scraper";
 import Store from "./Store";
 import TelegramBot from "./TelegramBot";
@@ -20,11 +20,11 @@ export default class PricesService {
     }
 
     async updatePrices() {
-        const { store, bot } = this;
+        const { store, bot, logger } = this;
 
-        const items = store.getTrackedPriceItems();
+        const items = await store.loadTrackedPriceItems();
         const scrappedData = await this.scrapPrices(items);
-        store.saveResult(scrappedData);
+        store.savePriceScrapingResult(scrappedData);
 
         const previousLowest = await store.getLowestPricesFromFile();
         const scrappedLowest = this.scrappedDataToLowestPrices(scrappedData);
@@ -32,7 +32,10 @@ export default class PricesService {
         store.saveLowestPrices(currentLowest);
 
         const updates = this.getUpdates(previousLowest, currentLowest);
-        if (!updates.length) return;
+        if (!updates.length) {
+            logger.info('Nothing changed.');
+            return;
+        }
 
         this.logPriceUpdates(updates);
         bot.sendMessage(this.generateBotUpdateMessage(items, updates));
@@ -51,7 +54,7 @@ export default class PricesService {
         for (const [id, { url, parser }] of Object.entries(items)) {
             updateBar(1);
 
-            const [error, res] = await scraper.get(url, parsers[parser]);
+            const [error, res] = await scraper.getPrice(url, priceParsers[parser]);
             if (error) {
                 logger.error(`Failed to scrap data for: ${id} - Error: ${error.message}`);
                 continue;
@@ -100,12 +103,14 @@ export default class PricesService {
         updates.forEach(u => {
             if (isNewPriceUpdate(u)) {
                 logger.important(` + ${u.currentPrice} (${u.id})`);
-
-            } else if (u.currentPrice < u.previousPrice) {
-                logger.success(`${u.previousPrice} -> ${u.currentPrice} (${u.id})`);
-
+                return;
+            }
+            
+            const diff = (u.currentPrice - u.previousPrice).toFixed(2);
+            if (u.currentPrice < u.previousPrice) {
+                logger.success(`[${diff}] ${u.previousPrice} -> ${u.currentPrice} (${u.id})`);
             } else if (u.currentPrice > u.previousPrice) {
-                logger.failure(`${u.currentPrice} <- ${u.previousPrice} (${u.id})`);
+                logger.failure(`[${diff}] ${u.previousPrice} -> ${u.currentPrice} (${u.id})`);
             }
         });
     }
@@ -130,16 +135,17 @@ export default class PricesService {
 
             if (isNewPriceUpdate(u)) {
                 firstUpdateStrings.push(bot.escape(` • ⭐ added price (${u.currentPrice}) for `) + url);
-            } else if (u.currentPrice < u.previousPrice) {
-                discountStrings.push(bot.escape(` • 💚 ${u.previousPrice} -> ${u.currentPrice} for `) + url);
+                return;
+            }
+            
+            const diff = (u.currentPrice - u.previousPrice).toFixed(2);
+            if (u.currentPrice < u.previousPrice) {
+                discountStrings.push(bot.escape(` • 💚 [${diff}] ${u.previousPrice} -> ${u.currentPrice} for `) + url);
             } else if (u.currentPrice > u.previousPrice) {
-                priceUpStrings.push(bot.escape(` • 💔 ${u.currentPrice} <- ${u.previousPrice} for `) + url);
+                priceUpStrings.push(bot.escape(` • 💔 [${diff}] ${u.previousPrice} -> ${u.currentPrice} for `) + url);
             }
         });
 
-        return header + 
-            discountStrings.join('\n\n') + 
-            firstUpdateStrings.join('\n\n') + 
-            priceUpStrings.join('\n\n');
+        return header + [...discountStrings, ...firstUpdateStrings, ...priceUpStrings].join('\n\n');
     }
 }

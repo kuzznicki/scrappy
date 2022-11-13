@@ -90,7 +90,7 @@ test('Should return false if failed to save lowest prices data to file', async (
 
 test('Should be able to save scraping results to file', async () => {
     const data: PriceScrapResultById = { 'item1': [{ shop: 'A', price: 2 }] };
-    const success = await store.saveResult(data);
+    const success = await store.savePriceScrapingResult(data);
 
     expect(writeFileMock).toBeCalledTimes(1);
     expect(writeFileMock).toBeCalledWith(expect.stringMatching(/.+\.json/), JSON.stringify(data));
@@ -102,7 +102,7 @@ test('Should return false if failed to save scraping results to file', async () 
     writeFileMock.mockRejectedValue(mockErrorString);
     
     const data: PriceScrapResultById = { 'item1': [{ shop: 'A', price: 2 }] };
-    const success = await store.saveResult(data);
+    const success = await store.savePriceScrapingResult(data);
 
     expect(writeFileMock).toBeCalledTimes(1);
     expect(logErrorMock).toBeCalledTimes(1);

@@ -1,5 +1,6 @@
 import "dotenv/config";
 import PricesService from "./PricesService.js";
+import AvailabilityService from "./AvailabilityService.js";
 import Scraper from "./Scraper.js";
 
 import Server from "./Server.js";
@@ -16,5 +17,7 @@ import TelegramBot from './TelegramBot';
     const scraper = new Scraper();
 
     const pricesService = new PricesService(store, scraper, bot);
-    Server.run(pricesService);
+    const availabilityService = new AvailabilityService(store, scraper, bot);
+
+    Server.run(pricesService, availabilityService);
 })();

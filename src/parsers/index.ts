@@ -1,10 +1,15 @@
-import { PriceScrapResult } from "../types";
+import { AvailabilityById, PriceScrapResult } from "../types";
 import perfumehub from "./perfumehub";
+import perfumypl from "./perfumypl";
 
-const modulesMap: { 
+export const priceParsers: { 
     [k: string]: (html: string) => PriceScrapResult[]
 } = {
     perfumehub
 }
 
-export default modulesMap;
+export const availabilityParsers: {
+    [k: string]: (html: string, siteUrl: string) => [AvailabilityById, boolean]
+} = {
+    perfumypl
+}

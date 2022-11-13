@@ -58,3 +58,38 @@ export type PriceUpdatesByType = {
     priceUp: ExistingPriceUpdate[], 
     priceDown: ExistingPriceUpdate[] 
 }
+
+export type Availability = {
+    url: string,
+    name: string,
+    available: boolean
+}
+
+export type AvailabilityById = {
+    [trackedItemId: string]: Availability
+};
+
+export type AvailabilityBySite = {
+    [siteId: string]: AvailabilityById
+}
+
+export type SiteDefinition = {
+    name: string,
+    urlPattern: string,
+    initialValue: string,
+    parser: string
+}
+
+export type TrackedAvailabilitySites = {
+    [trackedItemId: string]: {
+        name: string,
+        urlPattern: string,
+        initialValue: string,
+        parser: string
+    }
+};
+
+export type AvailabilityUpdates = {
+    availableIds: string[],
+    notAvailableIds: string[]
+}
