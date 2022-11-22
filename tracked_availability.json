@@ -1,0 +1,15 @@
+{
+    "samples-for-women": {
+        "name": "🟪 Perfumy.pl - Próbki damskie 🟪",
+        "urlPattern": "https://perfumy.pl/pol_m_Perfumy-damskie_Probki-perfum-158.html?counter={{PAGE_NUMBER}}",
+        "initialValue": "0",
+        "parser": "perfumypl"
+    },
+    "justjoinit": {
+        "name": "💻 Just Join IT 💻",
+        "urlPattern": "https://justjoin.it/api/offers",
+        "initialValue": "0",
+        "parser": "justjoinit_json",
+        "contentType": "json"
+    }
+}
