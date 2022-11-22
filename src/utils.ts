@@ -73,3 +73,12 @@ export function splitMessage(messageParts: string[], singleMessageCharsLimit: nu
 
     return messages;
 }
+
+export function isValidHttpUrl(str: string) {
+    try {
+        const url = new URL(str);
+        return url.protocol === "http:" || url.protocol === "https:";
+    } catch (e) {
+        return false;
+    }
+}

@@ -3,7 +3,7 @@ import { existsSync, mkdirSync } from "fs";
 import Logger from "./Logger";
 import { formatDatetime, getEnvVariable } from "./utils";
 import { priceParsers, availabilityParsers } from "./parsers";
-import { AvailabilityById, AvailabilityBySite, LowestPricesById, TrackedAvailabilitySites, TrackedPriceItemsDict, PriceScrapResultById } from "./types";
+import { AvailabilityBySite, LowestPricesById, TrackedAvailabilitySites, TrackedPriceItemsDict, PriceScrapResultById, AddTrackedPriceItemPayload } from "./types";
 
 export default class Store {
     trackedPricesItems: TrackedPriceItemsDict = {};
@@ -94,7 +94,7 @@ export default class Store {
         }
     }
 
-    async addTrackedPriceItem(payload: { name: string, url: string, parser: string }) {
+    async addTrackedPriceItem(payload: AddTrackedPriceItemPayload) {
         this.trackedPricesItems[Date.now() + ''] = payload;
         // created
         // created by

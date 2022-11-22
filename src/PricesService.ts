@@ -17,6 +17,8 @@ export default class PricesService {
         this.scraper = scraper;
         this.bot = bot;
         this.logger = Logger.getInstance();
+
+        bot.onItemAdded(payload => store.addTrackedPriceItem(payload));
     }
 
     async updatePrices() {

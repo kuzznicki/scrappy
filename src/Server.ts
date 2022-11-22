@@ -2,11 +2,13 @@ import express from "express";
 import { getEnvVariable } from "./utils";
 import PricesService from "./PricesService";
 import AvailabilityService from "./AvailabilityService";
+import TelegramBot from "./TelegramBot";
 
 export default class Server {
     static async run(
         pricesService: PricesService, 
-        availabilityService: AvailabilityService
+        availabilityService: AvailabilityService,
+        bot: TelegramBot
     ) {
         const PORT = getEnvVariable('SERVER_PORT', 'number');
         
@@ -50,5 +52,10 @@ export default class Server {
 
         checkPrices();
         checkAvailability();
+
+        bot.onScan(() => {
+            checkAvailability();
+            checkPrices();
+        });
     }
 }

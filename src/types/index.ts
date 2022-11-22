@@ -93,3 +93,18 @@ export type AvailabilityUpdates = {
     availableIds: string[],
     notAvailableIds: string[]
 }
+
+export type AddTrackedPriceItemPayload = { 
+    url: string, 
+    name: string, 
+    parser: string 
+};
+
+export function isTrackedPriceItemPayload(val: any): val is AddTrackedPriceItemPayload {
+    return (
+        val && typeof val === 'object' &&
+        'url' in val && typeof val['url'] === 'string' &&
+        'name' in val && typeof val['name'] === 'string' &&
+        'parser' in val && typeof val['parser'] === 'string'
+    );
+}

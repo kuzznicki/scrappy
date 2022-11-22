@@ -19,5 +19,5 @@ import TelegramBot from './TelegramBot';
     const pricesService = new PricesService(store, scraper, bot);
     const availabilityService = new AvailabilityService(store, scraper, bot);
 
-    Server.run(pricesService, availabilityService);
+    Server.run(pricesService, availabilityService, bot);
 })();
