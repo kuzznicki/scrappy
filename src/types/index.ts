@@ -85,7 +85,8 @@ export type TrackedAvailabilitySites = {
         name: string,
         urlPattern: string,
         initialValue: string,
-        parser: string
+        parser: string,
+        contentType?: 'html' | 'json'
     }
 };
 

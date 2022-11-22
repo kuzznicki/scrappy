@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import { existsSync, mkdirSync } from "fs";
 import Logger from "./Logger";
 import { formatDatetime, getEnvVariable } from "./utils";
-import { priceParsers, availabilityParsers } from "./parsers";
+import { priceParsers, availabilityParsers, availabilityParsersJson } from "./parsers";
 import { AvailabilityBySite, LowestPricesById, TrackedAvailabilitySites, TrackedPriceItemsDict, PriceScrapResultById, AddTrackedPriceItemPayload } from "./types";
 
 export default class Store {
@@ -117,17 +117,17 @@ export default class Store {
             const sites: TrackedAvailabilitySites = {};
             
             Object.keys(jsonData).forEach(k => {
-                const { name, urlPattern, initialValue, parser } = jsonData[k];
+                const { name, urlPattern, initialValue, parser, contentType } = jsonData[k];
 
-                if (!name || !urlPattern || !initialValue || !parser) {
+                if (!name || !urlPattern || !parser) {
                     throw new Error(`Wrong definition of ${k} observed availability site.`);
                 }
 
-                if (!availabilityParsers[parser]) {
+                if (!availabilityParsers[parser] && !availabilityParsersJson[parser]) {
                     throw new Error(`Unknown parser: ${parser}.`);
                 }
 
-                sites[k] = { name, urlPattern, initialValue, parser };
+                sites[k] = { name, urlPattern, initialValue: initialValue || 0, parser, contentType };
             });
 
             this.trackedAvailabilitySites = sites;

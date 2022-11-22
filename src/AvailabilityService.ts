@@ -1,5 +1,5 @@
 import Logger from "./Logger";
-import { availabilityParsers } from "./parsers";
+import { availabilityParsers, availabilityParsersJson } from "./parsers";
 import Scraper from "./Scraper";
 import Store from "./Store";
 import TelegramBot from "./TelegramBot";
@@ -71,7 +71,11 @@ export default class AvailabilityService {
             do {
                 let url: string = urlPattern.replace(PAGE_NUMBER_PATTERN, pageVal.toString());
 
-                const [error, res, thereIsNextPage] = await scraper.getAvailability(url, availabilityParsers[parser]);
+                const [error, res, thereIsNextPage] = await ( siteDef.contentType === 'json'
+                    ? scraper.getAvailabilityJson(url, availabilityParsersJson[parser])
+                    : scraper.getAvailability(url, availabilityParsers[parser])
+                );
+
                 if (error) {
                     logger.error(`Failed to scrap availability for: ${siteId} - Error: ${error.message}`);
                     continue;

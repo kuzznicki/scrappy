@@ -8,7 +8,7 @@ export default class Scraper {
     ): Promise<[Error, null] | [false, PriceScrapResult[]]> {
         
         try {
-            const html = await this._scrapHtml(url);
+            const html = await this.scrap<string>(url);
             const res: PriceScrapResult[] = parser(html);
             return [false, res];
         } catch (e) {
@@ -20,9 +20,8 @@ export default class Scraper {
         url: string, 
         parser: (html: string, siteUrl: string) => [AvailabilityById, boolean]
     ): Promise<[Error, null, null] | [false, AvailabilityById, boolean]> {
-        
         try {
-            const html = await this._scrapHtml(url);
+            const html = await this.scrap<string>(url);
             const siteUrl = new URL(url).hostname;
             const res: [AvailabilityById, boolean] = parser(html, siteUrl);
             return [false, res[0], res[1]];
@@ -31,8 +30,23 @@ export default class Scraper {
         }
     }
 
-    _scrapHtml(url: string): Promise<string> {
-        return axios.get<string>(url, { 
+    async getAvailabilityJson(
+        url: string, 
+        parser: (html: object, siteUrl: string) => [AvailabilityById, boolean]
+    ): Promise<[Error, null, null] | [false, AvailabilityById, boolean]> {
+        
+        try {
+            const json = await this.scrap<object>(url);
+            const siteUrl = new URL(url).hostname;
+            const res: [AvailabilityById, boolean] = parser(json, siteUrl);
+            return [false, res[0], res[1]];
+        } catch (e) {
+            return e instanceof Error ? [e, null, null] : [new Error(e + ''), null, null];
+        }
+    }
+
+    private scrap<T>(url: string): Promise<T> {
+        return axios.get<T>(url, { 
             headers: {
                 "referer": url,
                 "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"106\", \"Google Chrome\";v=\"106\"",
