@@ -8,7 +8,6 @@
     "justjoinit": {
         "name": "💻 Just Join IT 💻",
         "urlPattern": "https://justjoin.it/api/offers",
-        "initialValue": "0",
         "parser": "justjoinit_json",
         "contentType": "json"
     }
