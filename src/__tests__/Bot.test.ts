@@ -33,7 +33,7 @@ test('Should throw error if sending message before calling launch()', async () =
 })
 
 test('Should send a message', async () => {
-    telegramBot.launch();
+    await telegramBot.launch();
     await telegramBot.sendMessage('test');
     expect(sendMessageMock).toBeCalledTimes(1);
 })
