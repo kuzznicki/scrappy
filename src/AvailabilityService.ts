@@ -33,7 +33,7 @@ export default class AvailabilityService {
             
             if (!updates.availableIds.length && !updates.notAvailableIds.length) {
                 logger.info('Nothing changed.')
-                break;
+                continue;
             }
     
             const siteName = sites[siteId].name;
